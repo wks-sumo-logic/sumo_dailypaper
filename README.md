@@ -2,7 +2,7 @@ Sumo Dashboard News
 ===================
 
 Ever wanted to be able to get your sumo Logic dashboard output, delivered where you want, when you want?
-Sumop Dashboard News is here to help you do just that; deliver your Sumo Logic Newspaper to you.
+Sumo Dashboard News is here to help you do just that; deliver your Sumo Logic Newspaper to you.
 
 We do this by using three APIs: Sumo Logic, Microsoft, and Google.
 
