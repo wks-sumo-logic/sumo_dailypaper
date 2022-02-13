@@ -4,11 +4,15 @@ Sumo Dashboard News
 Ever wanted to be able to get your sumo Logic dashboard output, delivered where you want, when you want?
 Sumo Dashboard News is here to help you do just that; deliver your Sumo Logic Newspaper to you.
 
-We do this by using three APIs: Sumo Logic, Microsoft, and Google.
-
+We do this by using the following APIs: Sumo Logic, Microsoft
 *     Sumo Logic - we extract the news you want, the news you need from your dashboards using the dashboard API
 *     Microsoft - we create, page by page, your newspaper in Microsoft docx format
-*     Google - we publish the report, and convert this into Google and PDF format
+
+Later we will implement publishing API to publish the report using:
+
+*     [Google Publish](https://github.com/wks-sumo-logic/gpublish)
+
+And we will have other publishing options available as well later on.
 
 The result? The options and freedom to review your Dashboards when you want.
 
