@@ -177,7 +177,7 @@ def create_newspaper(exportdir, reportdir):
             document.add_page_break()
             counter = counter + 1
 
-    reportfile = '.'.join((reporttag, DATE, 'docx'))
+    reportfile = '.'.join((reporttag, DATE, TIME, 'docx'))
     newspaper = os.path.abspath(os.path.join(reportdir, reportfile))
 
     if VERBOSE > 5:
