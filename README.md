@@ -10,7 +10,7 @@ We do this by using the following APIs: Sumo Logic, Microsoft
 
 Later we will implement publishing API to publish the report using:
 
-*     [Google Publish](https://github.com/wks-sumo-logic/gpublish)
+*   [Google Publish](https://github.com/wks-sumo-logic/gpublish)
 
 And we will have other publishing options available as well later on.
 
