@@ -70,23 +70,38 @@ Script Names and Purposes
 
 The scripts are organized into sub directories:
 
-    1. ./bin - 
-           ./bin/sumodashboardnews.py - this script drives the process to extract, build, and publish.
+*   ./bin/sumodashboardnews.py - this script drives the process to extract, build, and publish.
+
+NOTE: A configuration file can provide these and the list of dashboards you want in your newspaper.
+      A sample config file is provided; you will need to edit and save this as your config to use
+
+*   ./etc/sumodashboardnews.cfg - this is a sample config file to help you model your config file
+
+How to Use the Script
+=====================
+
+*   use a config file to create the newspaper ( required ) 
+    ./bin/sumodashboardnews.py -c /some/path/to/sumodashboardnews.cfg
+
+*   specify verbose output
+    ./bin/sumodashboardnews.py -c /some/path/to/sumodashboardnews.cfg -v 9
+
+Important Notes
+===============
 
 NOTE: this script required three items. 
 
     1. A Sumo API key name
     2. A Sumo API secret string 
-    3. A Sumo Dashboard ID
+    3. A list of Sumo Dashboard IDs
 
 NOTE: Please make sure that the ID that owns the API key also owns the dashboard you try to access
+
+Reference Notes
+===============
 
 *   [Dashboard-Links](https://help.sumologic.com/Visualizations-and-Alerts/Dashboards/Get-Started-with-Dashboards-and-Panels/Add-a-Dashboard-Link)
 *   [Manage-API-Keys](https://help.sumologic.com/Manage/Security/Access-Keys)
-
-NOTE: Please make sure that the ID that owns the API key also owns the dashboard you try to access
-
-RECOMMENDATION: A configuration file can provide these and the list of dashboards you want in your newspaper.
 
 To Do List:
 ===========
