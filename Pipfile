@@ -1,0 +1,20 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pyinstaller = "*"
+
+[packages]
+pyinstaller = "*"
+requests = "*"
+datetime = "*"
+argparse = "*"
+configparser = "*"
+docx = "*"
+pdf2image = "*"
+fnmatch = "*"
+cookielib = "*"
+tzlocal = "*"
+json = "*"
