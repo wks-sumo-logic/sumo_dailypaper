@@ -5,6 +5,7 @@ Ever wanted to be able to get your sumo Logic dashboard output, delivered where 
 Sumo Dashboard News is here to help you do just that; deliver your Sumo Logic Newspaper to you.
 
 We do this by using the following APIs: Sumo Logic, Microsoft
+
 *     Sumo Logic - 
 
 we extract the news you want, the news you need from your dashboards using the dashboard API
@@ -12,6 +13,8 @@ we extract the news you want, the news you need from your dashboards using the d
 *     Microsoft - 
 
 we create, page by page, your newspaper in Microsoft docx format
+
+Now, you have a record of the dashboard output so you can track the results.
 
 Later we will implement publishing API to publish the report using:
 
@@ -86,21 +89,21 @@ Script Names and Purposes
 
 The scripts are organized into sub directories:
 
-*   ./bin/sumodashboardnews.py - this script drives the process to extract, build, and publish.
+*   ./bin/sumologic_dashboard_news.py - this script drives the process to extract, build, and publish.
 
 NOTE: A configuration file can provide these and the list of dashboards you want in your newspaper.
       A sample config file is provided; you will need to edit and save this as your config to use
 
-*   ./etc/sumodashboardnews.cfg - this is a sample config file to help you model your config file
+*   ./etc/sumologic_dashboard_news.cfg - this is a sample config file to help you model your config file
 
 How to Use the Script
 =====================
 
 *   use a config file to create the newspaper ( required ) 
-    ./bin/sumodashboardnews.py -c /some/path/to/sumodashboardnews.cfg
+    ./bin/sumologic_dashboard_news.py -c /some/path/to/sumologic_dashboard_news.cfg
 
 *   specify verbose output
-    ./bin/sumodashboardnews.py -c /some/path/to/sumodashboardnews.cfg -v 9
+    ./bin/sumologic_dashboard_news.py -c /some/path/to/sumologic_dashboard_news.cfg -v 9
 
 Important Notes
 ===============
@@ -111,7 +114,9 @@ NOTE: this script required three items.
     2. A Sumo API secret string 
     3. A list of Sumo Dashboard IDs
 
-NOTE: Please make sure that the ID that owns the API key also owns the dashboard you try to access
+NOTE: Please make sure that your API key agrees with the Dashboard ID you supply!!!
+
+If not, you will probably see errors that look like a timeout. 
 
 Reference Notes
 ===============

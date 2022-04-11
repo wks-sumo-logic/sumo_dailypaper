@@ -2,16 +2,16 @@
 # -*- coding: utf-8 -*-
 
 """
-Exaplanation: sumodashboardnews creates a newspaper for you of dashboards from your organziation
+Exaplanation: sumologic_dashboard_news makes a newspaper from dashboard exports
 
 Usage:
-    $ python  sumodashboardnews [ options ]
+    $ python  sumologic_dashboard_news [ options ]
 
 Style:
     Google Python Style Guide:
     http://google.github.io/styleguide/pyguide.html
 
-    @name           sumodashboardnews
+    @name           sumologic_dashboard_news
     @version        2.50
     @author-name    Wayne Schmidt
     @author-email   wschmidt@sumologic.com
@@ -47,7 +47,7 @@ sys.dont_write_bytecode = 1
 MY_CFG = 'undefined'
 PARSER = argparse.ArgumentParser(description="""
 
-sumodashboardnews is a tool to build your own newpaper from dashboard output
+sumologic_dashboard_news is a tool to build your own newpaper from dashboard output
 
 """)
 
