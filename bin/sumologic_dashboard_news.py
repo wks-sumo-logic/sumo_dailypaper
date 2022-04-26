@@ -51,18 +51,24 @@ sumologic_dashboard_news is a tool to build your own newpaper from dashboard out
 
 """)
 
-PARSER.add_argument("-c", metavar='<configfile>', dest='CFGFILE', \
+PARSER.add_argument("-a", metavar='<secret>', dest='MY_SECRET', \
+                    help="set query authkey (format: <key>:<secret>) ")
+
+PARSER.add_argument("-d", metavar='<dashboard>', dest='DASHBOARDLIST', \
+                    action='append', help="set dashboard uid (list format)")
+
+PARSER.add_argument("-c", metavar='<configfile>', dest='CONFIG', \
                     required=True,help="set config file")
+
 PARSER.add_argument("-s", metavar='<sleeptime>', default=2, dest='SLEEPTIME', \
                     help="set sleep time to check results")
+
 PARSER.add_argument("-v", type=int, default=0, metavar='<verbose>', \
-                    dest='VERBOSE', help="increase verbosity")
+                    dest='verbose', help="increase verbosity")
 
 ARGS = PARSER.parse_args()
 
 SLEEP = ARGS.SLEEPTIME
-
-VERBOSE = ARGS.VERBOSE
 
 NOWTIME = datetime.now().strftime("%Y/%m/%d, %H:%M:%S")
 
@@ -72,23 +78,77 @@ TIME = datetime.now().strftime("%H%M%S")
 
 CONFIG = configparser.ConfigParser()
 CONFIG.optionxform = str
-CONFIG.read(ARGS.CFGFILE)
+CONFIG.read(ARGS.CONFIG)
 
-( SUMO_UID, SUMO_KEY ) = (CONFIG.get("Default", "APISTRING")).split(":")
+def resolve_option_variables():
+    """
+    Validates and confirms all necessary variables for the script
+    """
+
+    if ARGS.MY_SECRET:
+        (keyname, keysecret) = ARGS.MY_SECRET.split(':')
+        os.environ['SUMO_UID'] = keyname
+        os.environ['SUMO_KEY'] = keysecret
+
+def resolve_config_variables():
+    """
+    Validates and confirms all necessary variables for the script
+    """
+
+    if ARGS.CONFIG:
+        cfgfile = os.path.abspath(ARGS.CONFIG)
+        configobj = configparser.ConfigParser()
+        configobj.optionxform = str
+        configobj.read(cfgfile)
+
+        if ARGS.verbose > 8:
+            print('Displaying Config Contents:')
+            print(dict(configobj.items('Default')))
+
+        if configobj.has_option("Default", "SUMO_UID"):
+            os.environ['SUMO_UID'] = configobj.get("Default", "SUMO_UID")
+
+        if configobj.has_option("Default", "SUMO_KEY"):
+            os.environ['SUMO_KEY'] = configobj.get("Default", "SUMO_KEY")
+
+def initialize_variables():
+    """
+    Validates and confirms all necessary variables for the script
+    """
+
+    resolve_option_variables()
+
+    resolve_config_variables()
+
+    try:
+        my_uid = os.environ['SUMO_UID']
+        my_key = os.environ['SUMO_KEY']
+
+    except KeyError as myerror:
+        print('Environment Variable Not Set :: {} '.format(myerror.args[0]))
+
+    return my_uid, my_key
+
+( sumo_uid, sumo_key ) = initialize_variables()
 
 DEFAULTDICT = dict(CONFIG.items('Default'))
 DASHBOARDDICT = dict(CONFIG.items('Dashboards'))
 
-EXPORTDIR = os.path.abspath(CONFIG.get("Default", "EXPORTDIR"))
+EXPORTDIR = '/var/tmp/dashboardexport'
 
-REPORTDIR = os.path.abspath(CONFIG.get("Default", "REPORTDIR"))
+REPORTDIR = '/var/tmp/dashboardnews'
+
+REPORTTAG = 'sumodashboardnews'
 
 def main():
     """
     Wrapper for the newspaper export, creation, and optional publishing
     """
+
     prepare_environment(EXPORTDIR,REPORTDIR)
-    export_dashboards(SUMO_UID, SUMO_KEY, EXPORTDIR, DASHBOARDDICT)
+
+    export_dashboards(sumo_uid, sumo_key, EXPORTDIR, DASHBOARDDICT)
+
     create_newspaper(EXPORTDIR,REPORTDIR)
 
 def prepare_environment(exportdir,reportdir):
@@ -96,11 +156,11 @@ def prepare_environment(exportdir,reportdir):
     Build the environment
     """
 
-    if VERBOSE > 5:
+    if ARGS.verbose > 5:
         print('Creating: {}'.format(exportdir))
     os.makedirs(exportdir, exist_ok=True)
 
-    if VERBOSE > 5:
+    if ARGS.verbose > 5:
         print('Creating: {}'.format(reportdir))
     os.makedirs(reportdir, exist_ok=True)
 
@@ -121,7 +181,7 @@ def export_dashboards(sumouid, sumokey, exportdir, dashboarddict):
         else:
             outputfile = "{dir}/{file}.{ext}".format(dir=exportdir,file=dashboardkey,ext='pdf')
 
-            if VERBOSE > 3:
+            if ARGS.verbose > 3:
                 print('Writing File: {}'.format(outputfile))
 
             with open(outputfile, "wb") as fileobject:
@@ -129,7 +189,7 @@ def export_dashboards(sumouid, sumokey, exportdir, dashboarddict):
 
     for path in os.listdir(exportdir):
         file_name = os.path.join(exportdir, path)
-        if VERBOSE > 3:
+        if ARGS.verbose > 3:
             print('Converting File: {}'.format(file_name))
         if os.path.isfile(file_name):
             extension = os.path.splitext(file_name)[1]
@@ -145,7 +205,7 @@ def create_newspaper(exportdir, reportdir):
     Build the newspaper based off of exported dashboards
     """
 
-    reporttag  = CONFIG.get("Default", "REPORTTAG")
+    reporttag  = REPORTTAG
 
     document = Document()
 
@@ -180,7 +240,7 @@ def create_newspaper(exportdir, reportdir):
     reportfile = '.'.join((reporttag, DATE, TIME, 'docx'))
     newspaper = os.path.abspath(os.path.join(reportdir, reportfile))
 
-    if VERBOSE > 5:
+    if ARGS.verbose > 5:
         print('Printing Newspaper: {}'.format(newspaper))
 
     document.save(newspaper)
@@ -191,7 +251,7 @@ class SumoApiClient():
     This is defined SumoLogic API Client
     The class includes the HTTP methods, cmdlets, and init methods
     """
-    def __init__(self, accessId=SUMO_UID, accessKey=SUMO_KEY, endpoint=None, \
+    def __init__(self, accessId=sumo_uid, accessKey=sumo_key, endpoint=None, \
                  caBundle=None, cookieFile='cookies.txt'):
         self.session = requests.Session()
         self.session.auth = (accessId, accessKey)
@@ -213,6 +273,8 @@ class SumoApiClient():
     def _get_endpoint(self):
         """
         SumoLogic REST API endpoint changes based on the geo location of the client.
+        This method makes a request to the default REST endpoint and resolves the 401 to learn
+        the right endpoint
         """
         self.endpoint = 'https://api.sumologic.com/api'
         self.response = self.session.get('https://api.sumologic.com/api/v1/collectors')
@@ -329,7 +391,7 @@ class SumoApiClient():
         """
         response = self.post('/dashboards/reportJobs', params=body, version='v2')
         job_id = json.loads(response.text)['id']
-        if VERBOSE > 5:
+        if ARGS.verbose > 5:
             print('Started Job: {}'.format(job_id))
         return job_id
 
@@ -355,7 +417,7 @@ class SumoApiClient():
             "format": response.headers["Content-Type"],
             "bytes": response.content
         }
-        if VERBOSE > 5:
+        if ARGS.verbose > 5:
             print ('Returned File Type: {}'.format(response['format']))
         return response
 
@@ -389,7 +451,7 @@ class SumoApiClient():
             progress = response['result']['status']
             time.sleep(seconds)
 
-        if VERBOSE > 5:
+        if ARGS.verbose > 5:
             print('{}/{} job: {} status: {}'.format(tried, tries, \
                                                     job_id, response['result']['status']))
         response['tried'] = tried
@@ -405,7 +467,7 @@ class SumoApiClient():
         """
         payload = self.define_export_job(report_id,timezone=timezone,exportFormat=exportFormat)
         job = self.export_dashboard(payload)
-        if VERBOSE > 7:
+        if ARGS.verbose > 7:
             print ('Running Job: {}'.format(job))
         poll_status = self.poll_export_dashboard_job(job,tries=tries,seconds=seconds)
         if poll_status['result']['status'] == 'Success':
