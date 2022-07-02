@@ -4,15 +4,9 @@ Sumo Dashboard News
 Ever wanted to be able to get your sumo Logic dashboard output, delivered where you want, when you want?
 Sumo Dashboard News is here to help you do just that; deliver your Sumo Logic Newspaper to you.
 
-We do this by using the following APIs: Sumo Logic, Microsoft
+We do this by using Sumo Logic and Microsoft to extract the data you want and build a report.
 
-*     Sumo Logic - 
-
-we extract the news you want, the news you need from your dashboards using the dashboard API
-
-*     Microsoft - 
-
-we create, page by page, your newspaper in Microsoft docx format
+In that report we put page by page dashboar output into your newspaper in Microsoft docx format
 
 Now, you have a record of the dashboard output so you can track the results.
 
